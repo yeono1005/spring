@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Member">
+	
+	<!-- resultMap의 id는 알아볼 수 있게 지정해야함 type은 vo의 루트를 입력하면됨 -->
+	<resultMap id="resultMember" type="com.mvcproject.member.controller.model.vo.Member">
+	
+		<!-- vo에서 지정했던 필드들 모두 입력. property는 vo에서 썼던 필드이름이고, column은 SQL문에서의 테이블 컬럼명 입력해야함 -->
+		<!-- 먼저 primary key 선언 -->
+		<id property="id" column="ID" />	
+		<result property="passwd" column="PASSWD" />
+		<result property="name" column="NAME" />
+		<result property="email" column="EMAIL" />
+		<result property="gender" column="GENDER" />
+		<result property="age" column="AGE" />
+		<result property="phone" column="PHONE" />
+		<result property="address" column="ADDRESS" />
+		<result property="enrollDate" column="ENROLL_DATE" />
+	</resultMap>
+	
+	<!-- member table의 모든 데이터 select -->
+	<!-- 위에서 resultMap id="resultMember" 를 설정해줬기 떄문에 resultType="Member" 을 쓰지 않아도 됨 -->
+	<select id="selectMemberAll" resultMap="resultMember">
+		SELECT * FROM MEMBER
+	</select>
+	
+	<!-- member table에서 하나만 가져오는 select -->
+	<!-- 하나만 갖고오는거라 그 하나의 자료형만 paramterType에 써줌. 하나 이상이면 vo로 작성해야함 -->
+	<select id="selectMember" parameterType="string" resultMap="resultMember">
+		SELECT * FROM MEMBER WHERE ID = #{userid}
+	</select>
+	<!-- resultMap을 쓸 경우 : 디비의 컬럼명과 vo에서 변수로 지정한 이름이 다를때 사용해야함.
+		이름이 다 동일하면 위의 resultMap 안 써도 되고 select문에서 resultType="vo이름"으로만 설정 해줘도 됨. 
+		resultMap="resultMember" 은 select때만 사용함 -->
+
+	<!-- member delete -->
+	<delete id="deleteMember" parameterType="Member">
+		DELETE FROM MEMBER WHERE ID = #{id}
+		<!-- DELETE FROM MEMBER WHERE EMAIL = #{email} AND NAME = #{name} 으로도 쓸 수 있음. -->
+	</delete>
+
+	<!-- member insert -->
+	<insert id="insertMember" parameterType="Member" statementType="PREPARED">
+		INSERT INTO MEMBER VALUES(#{id}, #{passwd}, #{name}, #{gender}, #{age}, DEFAULT)
+	</insert>
+	
+	<!-- member update -->
+	<update id="updateMember" parameterType="Member">
+		UPDATE MEMBER SET NAME = #{name}, GENDER = #{gender}, AGE = #{age} WHERE ID = #{id}
+	</update>
+
+	
+</mapper>
